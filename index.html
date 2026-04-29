@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aditya Bharti — Digital Marketer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg: #080b12;
+      --bg2: #0d111c;
+      --accent: #5effa0;
+      --accent2: #4fd4ff;
+      --accent3: #ff6af0;
+      --text: #e8eaf2;
+      --muted: #5a607a;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.07);
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    #cursor {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
+      mix-blend-mode: screen;
+    }
+    #cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid rgba(94,255,160,0.5);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: transform 0.18s ease, width 0.25s, height 0.25s;
+    }
+    body:hover #cursor { transform: translate(-50%,-50%) scale(1); }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 6vw;
+      background: linear-gradient(to bottom, rgba(8,11,18,0.95) 0%, transparent 100%);
+      backdrop-filter: blur(0px);
+    }
+    .nav-logo {
+      font-family: var(--font-head);
+      font-weight: 800; font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 60%, rgba(94,255,160,0.07) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 40% at 20% 80%, rgba(79,212,255,0.06) 0%, transparent 60%),
+                  radial-gradient(ellipse 40% 30% at 80% 20%, rgba(255,106,240,0.05) 0%, transparent 55%);
+    }
+    /* Grid lines */
+    .hero-grid {
+      position: absolute; inset: 0; opacity: 0.04;
+      background-image: linear-gradient(var(--muted) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--muted) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-inner {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; width: 100%; max-width: 1100px;
+      padding: 0 5vw;
+    }
+
+    /* LEFT TEXT */
+    .hero-left {
+      flex: 1; text-align: right; padding-right: 3rem;
+      opacity: 0; transform: translateX(-40px);
+    }
+    .hero-greeting {
+      font-family: var(--font-body);
+      font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.6rem;
+    }
+    .hero-name {
+      font-family: var(--font-head);
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      font-weight: 800; line-height: 1.1;
+      color: var(--text);
+    }
+    .hero-name span { color: var(--accent); }
+    .hero-tagline-left {
+      margin-top: 1rem;
+      font-size: 0.85rem; color: var(--muted);
+      line-height: 1.6; max-width: 280px; margin-left: auto;
+    }
+
+    /* CHARACTER */
+    .hero-character-wrap {
+      flex-shrink: 0; position: relative;
+      width: clamp(220px, 28vw, 340px);
+      height: clamp(320px, 40vw, 480px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .char-glow {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 200px; height: 40px;
+      background: radial-gradient(ellipse, rgba(94,255,160,0.35) 0%, transparent 70%);
+      filter: blur(10px);
+    }
+    #character-svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 20px 40px rgba(94,255,160,0.15));
+      transform-origin: center bottom;
+      transition: transform 0.05s linear;
+    }
+
+    /* RIGHT TEXT */
+    .hero-right {
+      flex: 1; padding-left: 3rem;
+      opacity: 0; transform: translateX(40px);
+    }
+    .hero-profession-label {
+      font-family: var(--font-body);
+      font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 0.6rem;
+    }
+    .hero-profession {
+      font-family: var(--font-head);
+      font-size: clamp(1.6rem, 3vw, 2.8rem);
+      font-weight: 700; line-height: 1.15;
+      color: var(--text);
+    }
+    .hero-sub {
+      margin-top: 1.2rem;
+      font-size: 0.85rem; color: var(--muted);
+      line-height: 1.6; max-width: 280px;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      margin-top: 1.8rem;
+      padding: 0.7rem 1.5rem;
+      background: var(--accent); color: #080b12;
+      border-radius: 40px;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.8rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(94,255,160,0.35); }
+    .hero-cta svg { width: 14px; height: 14px; }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); z-index: 2; opacity: 0;
+    }
+    .scroll-hint-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--muted), transparent);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%,100% { opacity: 0.3; transform: scaleY(0.7); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ── ABOUT SECTION ── */
+    #about {
+      position: relative;
+      padding: 10rem 6vw 8rem;
+      overflow: hidden;
+    }
+    .about-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1.3fr; gap: 6rem;
+      align-items: center;
+    }
+
+    /* About character */
+    .about-char-wrap {
+      position: relative;
+      display: flex; align-items: flex-end; justify-content: center;
+      height: 420px;
+      opacity: 0; transform: translateX(-60px);
+    }
+    #about-char-svg {
+      height: 100%;
+      filter: drop-shadow(0 20px 60px rgba(79,212,255,0.15));
+    }
+    .about-char-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(79,212,255,0.06) 0%, transparent 70%);
+    }
+
+    .about-content { opacity: 0; transform: translateY(40px); }
+    .section-eyebrow {
+      font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 800; line-height: 1.1;
+      color: var(--text); margin-bottom: 1.5rem;
+    }
+    .about-text {
+      font-size: 0.95rem; color: var(--muted);
+      line-height: 1.8; margin-bottom: 1rem;
+    }
+    .about-tags {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 2rem;
+    }
+    .tag {
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.75rem; color: var(--muted);
+      letter-spacing: 0.06em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Stats row */
+    .about-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin-top: 2.5rem;
+    }
+    .stat-item { border-left: 2px solid var(--border); padding-left: 1rem; }
+    .stat-num {
+      font-family: var(--font-head);
+      font-size: 2rem; font-weight: 800;
+      color: var(--accent); line-height: 1;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; }
+
+    /* ── SERVICES ── */
+    #services {
+      padding: 6rem 6vw 8rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(79,212,255,0.02) 50%, transparent 100%);
+    }
+    .services-inner { max-width: 1100px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 4rem; }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 2rem;
+      opacity: 0; transform: translateY(30px);
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .service-card:hover::before { opacity: 1; }
+    .service-card:hover { border-color: rgba(94,255,160,0.2); transform: translateY(-4px); }
+    .service-icon {
+      width: 44px; height: 44px; margin-bottom: 1.2rem;
+      background: rgba(94,255,160,0.1); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .service-name {
+      font-family: var(--font-head); font-weight: 700; font-size: 1.05rem;
+      color: var(--text); margin-bottom: 0.6rem;
+    }
+    .service-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── FOOTER / SOCIAL ── */
+    footer {
+      padding: 4rem 6vw 3rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .footer-inner { max-width: 600px; margin: 0 auto; }
+    .footer-name {
+      font-family: var(--font-head); font-weight: 800; font-size: 1.5rem;
+      color: var(--text); margin-bottom: 0.5rem;
+    }
+    .footer-tagline { font-size: 0.85rem; color: var(--muted); margin-bottom: 2.5rem; }
+    .social-links {
+      display: flex; justify-content: center; gap: 1.2rem; margin-bottom: 2.5rem;
+    }
+    .social-btn {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.65rem 1.3rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 40px;
+      font-size: 0.78rem; letter-spacing: 0.06em;
+      color: var(--muted); text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .social-btn:hover { transform: translateY(-3px); color: var(--text); }
+    .social-btn.insta:hover { border-color: #e1306c; background: rgba(225,48,108,0.08); }
+    .social-btn.whatsapp:hover { border-color: #25d366; background: rgba(37,211,102,0.08); }
+    .social-btn.linkedin:hover { border-color: #0a66c2; background: rgba(10,102,194,0.08); }
+    .social-btn svg { width: 16px; height: 16px; }
+    .footer-copy { font-size: 0.72rem; color: var(--muted); opacity: 0.5; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-inner { flex-direction: column; gap: 1rem; text-align: center; }
+      .hero-left { text-align: center; padding-right: 0; }
+      .hero-tagline-left { margin: 0.8rem auto 0; }
+      .hero-right { padding-left: 0; text-align: center; }
+      .hero-sub { margin: 0.8rem auto 0; }
+      .hero-character-wrap { width: 220px; height: 300px; order: -1; }
+      .about-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .about-char-wrap { height: 280px; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 580px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .about-stats { grid-template-columns: 1fr 1fr; }
+      .social-links { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">AB.</a>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+
+    <!-- Left text -->
+    <div class="hero-left">
+      <p class="hero-greeting">Hello, World 👋</p>
+      <h1 class="hero-name">I'm <span>Aditya</span><br/>Bharti</h1>
+      <p class="hero-tagline-left">Turning ideas into impactful digital experiences that grow brands.</p>
+    </div>
+
+    <!-- Character -->
+    <div class="hero-character-wrap">
+      <div class="char-glow"></div>
+      <svg id="character-svg" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- Shadow -->
+        <ellipse cx="100" cy="292" rx="44" ry="8" fill="rgba(0,0,0,0.4)"/>
+
+        <!-- Shoes -->
+        <rect x="63" y="270" width="28" height="12" rx="6" fill="#1a1e2e"/>
+        <rect x="109" y="270" width="28" height="12" rx="6" fill="#1a1e2e"/>
+        <rect x="61" y="274" width="20" height="8" rx="4" fill="#111420"/>
+        <rect x="107" y="274" width="20" height="8" rx="4" fill="#111420"/>
+
+        <!-- Pants -->
+        <path d="M72 200 L65 272 H91 L100 230 L109 272 H135 L128 200 Z" fill="#1e2438"/>
+        <!-- Pants crease -->
+        <line x1="100" y1="200" x2="100" y2="230" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
+        <!-- Belt -->
+        <rect x="68" y="196" width="64" height="9" rx="4" fill="#141828"/>
+        <rect x="93" y="197" width="14" height="7" rx="3" fill="#5effa0" opacity="0.6"/>
+
+        <!-- Shirt / Body -->
+        <rect x="65" y="120" width="70" height="80" rx="10" fill="#2a3050"/>
+        <!-- Shirt collar V -->
+        <path d="M100 130 L90 145 L100 138 L110 145 Z" fill="#1e2438"/>
+        <!-- Shirt buttons -->
+        <circle cx="100" cy="148" r="2.5" fill="rgba(255,255,255,0.15)"/>
+        <circle cx="100" cy="158" r="2.5" fill="rgba(255,255,255,0.15)"/>
+        <circle cx="100" cy="168" r="2.5" fill="rgba(255,255,255,0.15)"/>
+        <!-- Shirt highlight -->
+        <path d="M65 130 Q100 118 135 130 L135 125 Q100 112 65 125 Z" fill="rgba(255,255,255,0.04)"/>
+
+        <!-- Left arm -->
+        <g id="arm-left">
+          <rect x="38" y="122" width="30" height="18" rx="9" fill="#2a3050"/>
+          <rect x="30" y="136" width="18" height="36" rx="9" fill="#c0a07a"/>
+          <!-- Hand -->
+          <ellipse cx="39" cy="174" rx="10" ry="8" fill="#c0a07a"/>
+        </g>
+
+        <!-- Right arm -->
+        <g id="arm-right">
+          <rect x="132" y="122" width="30" height="18" rx="9" fill="#2a3050"/>
+          <rect x="152" y="136" width="18" height="36" rx="9" fill="#c0a07a"/>
+          <ellipse cx="161" cy="174" rx="10" ry="8" fill="#c0a07a"/>
+        </g>
+
+        <!-- Neck -->
+        <rect x="90" y="108" width="20" height="18" rx="6" fill="#c0a07a"/>
+
+        <!-- Head -->
+        <ellipse cx="100" cy="88" rx="34" ry="36" fill="#c0a07a"/>
+        <!-- Head highlight -->
+        <ellipse cx="93" cy="74" rx="12" ry="8" fill="rgba(255,255,255,0.06)"/>
+
+        <!-- Ears -->
+        <ellipse cx="66" cy="88" rx="6" ry="9" fill="#b89470"/>
+        <ellipse cx="134" cy="88" rx="6" ry="9" fill="#b89470"/>
+        <ellipse cx="66" cy="88" rx="3.5" ry="5.5" fill="#a07850"/>
+        <ellipse cx="134" cy="88" rx="3.5" ry="5.5" fill="#a07850"/>
+
+        <!-- Hair -->
+        <path d="M66 70 Q75 50 100 48 Q125 50 134 70 Q130 60 125 58 Q115 52 100 52 Q85 52 75 58 Q70 60 66 70 Z" fill="#2c1a0e"/>
+        <path d="M66 70 Q68 58 70 56 Q72 54 74 56 Q70 62 68 72 Z" fill="#2c1a0e"/>
+        <path d="M134 70 Q132 58 130 56 Q128 54 126 56 Q130 62 132 72 Z" fill="#2c1a0e"/>
+
+        <!-- Eyebrows -->
+        <path d="M80 76 Q88 72 93 75" stroke="#2c1a0e" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M107 75 Q112 72 120 76" stroke="#2c1a0e" stroke-width="2.5" stroke-linecap="round"/>
+
+        <!-- Eyes -->
+        <g id="eyes">
+          <ellipse cx="87" cy="83" rx="8" ry="8.5" fill="white"/>
+          <ellipse cx="113" cy="83" rx="8" ry="8.5" fill="white"/>
+          <!-- Pupils (will be animated) -->
+          <circle id="pupil-l" cx="87" cy="84" r="4.5" fill="#1a1014"/>
+          <circle id="pupil-r" cx="113" cy="84" r="4.5" fill="#1a1014"/>
+          <!-- Iris shine -->
+          <circle cx="89" cy="82" r="1.5" fill="white" opacity="0.7"/>
+          <circle cx="115" cy="82" r="1.5" fill="white" opacity="0.7"/>
+          <!-- Pupil highlight -->
+          <circle id="highlight-l" cx="89" cy="82" r="1" fill="rgba(94,255,160,0.8)"/>
+          <circle id="highlight-r" cx="115" cy="82" r="1" fill="rgba(94,255,160,0.8)"/>
+        </g>
+
+        <!-- Nose -->
+        <path d="M97 90 Q100 96 103 90" stroke="#a07850" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+        <!-- Smile -->
+        <path id="smile" d="M89 100 Q100 110 111 100" stroke="#8a5c3a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+        <!-- Laptop -->
+        <rect x="55" y="178" width="90" height="55" rx="6" fill="#151a2e"/>
+        <rect x="58" y="181" width="84" height="49" rx="4" fill="#0d111c"/>
+        <!-- Screen content lines -->
+        <rect x="64" y="188" width="50" height="3" rx="1.5" fill="rgba(94,255,160,0.4)"/>
+        <rect x="64" y="195" width="38" height="2" rx="1" fill="rgba(255,255,255,0.12)"/>
+        <rect x="64" y="200" width="44" height="2" rx="1" fill="rgba(255,255,255,0.08)"/>
+        <rect x="64" y="205" width="30" height="2" rx="1" fill="rgba(79,212,255,0.3)"/>
+        <rect x="64" y="210" width="52" height="2" rx="1" fill="rgba(255,255,255,0.08)"/>
+        <rect x="64" y="215" width="36" height="2" rx="1" fill="rgba(255,255,255,0.1)"/>
+        <!-- Cursor blink -->
+        <rect id="cursor-blink" x="116" y="195" width="2" height="10" rx="1" fill="rgba(94,255,160,0.9)"/>
+        <!-- Laptop base -->
+        <rect x="45" y="232" width="110" height="6" rx="3" fill="#111520"/>
+
+        <!-- Floating elements -->
+        <g id="float1" opacity="0.85">
+          <rect x="142" y="84" width="46" height="22" rx="6" fill="rgba(94,255,160,0.15)" stroke="rgba(94,255,160,0.3)" stroke-width="1"/>
+          <text x="165" y="99" text-anchor="middle" font-size="8" fill="#5effa0" font-family="monospace">+24% CTR</text>
+        </g>
+        <g id="float2" opacity="0.85">
+          <rect x="12" y="104" width="46" height="22" rx="6" fill="rgba(79,212,255,0.12)" stroke="rgba(79,212,255,0.3)" stroke-width="1"/>
+          <text x="35" y="119" text-anchor="middle" font-size="8" fill="#4fd4ff" font-family="monospace">3x ROAS</text>
+        </g>
+        <g id="float3" opacity="0.8">
+          <rect x="145" y="155" width="50" height="22" rx="6" fill="rgba(255,106,240,0.1)" stroke="rgba(255,106,240,0.25)" stroke-width="1"/>
+          <text x="170" y="170" text-anchor="middle" font-size="7.5" fill="#ff6af0" font-family="monospace">50K Reach</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Right text -->
+    <div class="hero-right">
+      <p class="hero-profession-label">Current Role</p>
+      <h2 class="hero-profession">Digital<br/>Marketer</h2>
+      <p class="hero-sub">Crafting data-driven campaigns and compelling brand stories that convert visitors into loyal customers.</p>
+      <a href="#about" class="hero-cta">
+        Explore My Work
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-hint-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-inner">
+
+    <!-- About character (walking left) -->
+    <div class="about-char-wrap">
+      <div class="about-char-bg"></div>
+      <svg id="about-char-svg" viewBox="0 0 160 300" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- Shadow -->
+        <ellipse cx="80" cy="295" rx="38" ry="7" fill="rgba(0,0,0,0.35)"/>
+        <!-- Walking legs -->
+        <g id="walk-legs">
+          <path id="leg-l" d="M58 195 L48 255 L62 255 L72 215" fill="#1e2438" stroke="none"/>
+          <path id="leg-r" d="M82 195 L90 250 L104 250 L96 215" fill="#1e2438"/>
+          <!-- Shoes walk -->
+          <rect x="42" y="252" width="22" height="10" rx="5" fill="#1a1e2e"/>
+          <rect x="88" y="247" width="22" height="10" rx="5" fill="#1a1e2e"/>
+        </g>
+        <!-- Body -->
+        <rect x="48" y="118" width="64" height="80" rx="10" fill="#263050"/>
+        <path d="M80 128 L71 143 L80 136 L89 143 Z" fill="#1e2438"/>
+        <circle cx="80" cy="150" r="2" fill="rgba(255,255,255,0.15)"/>
+        <circle cx="80" cy="160" r="2" fill="rgba(255,255,255,0.15)"/>
+        <!-- Arms walking -->
+        <g id="walk-arm-l">
+          <rect x="24" y="122" width="26" height="15" rx="7" fill="#263050"/>
+          <rect x="18" y="133" width="15" height="32" rx="7" fill="#c0a07a"/>
+          <ellipse cx="25" cy="167" rx="8" ry="7" fill="#c0a07a"/>
+        </g>
+        <g id="walk-arm-r">
+          <rect x="110" y="122" width="26" height="15" rx="7" fill="#263050"/>
+          <rect x="127" y="133" width="15" height="32" rx="7" fill="#c0a07a"/>
+          <ellipse cx="135" cy="167" rx="8" ry="7" fill="#c0a07a"/>
+        </g>
+        <!-- Neck -->
+        <rect x="72" y="108" width="16" height="16" rx="5" fill="#c0a07a"/>
+        <!-- Head -->
+        <ellipse cx="80" cy="84" rx="30" ry="32" fill="#c0a07a"/>
+        <ellipse cx="56" cy="83" rx="5" ry="8" fill="#b89470"/>
+        <ellipse cx="104" cy="83" rx="5" ry="8" fill="#b89470"/>
+        <!-- Hair -->
+        <path d="M50 68 Q60 50 80 48 Q100 50 110 68 Q106 58 100 56 Q92 50 80 50 Q68 50 60 56 Q54 58 50 68 Z" fill="#2c1a0e"/>
+        <!-- Eyebrows -->
+        <path d="M64 74 Q70 71 74 73" stroke="#2c1a0e" stroke-width="2" stroke-linecap="round"/>
+        <path d="M86 73 Q90 71 96 74" stroke="#2c1a0e" stroke-width="2" stroke-linecap="round"/>
+        <!-- Eyes -->
+        <ellipse cx="69" cy="81" rx="7" ry="7.5" fill="white"/>
+        <ellipse cx="91" cy="81" rx="7" ry="7.5" fill="white"/>
+        <circle cx="70" cy="82" r="4" fill="#1a1014"/>
+        <circle cx="92" cy="82" r="4" fill="#1a1014"/>
+        <circle cx="71" cy="80" r="1.5" fill="rgba(94,255,160,0.8)"/>
+        <circle cx="93" cy="80" r="1.5" fill="rgba(94,255,160,0.8)"/>
+        <!-- Smile -->
+        <path d="M71 95 Q80 103 89 95" stroke="#8a5c3a" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <!-- Belt -->
+        <rect x="48" y="196" width="64" height="8" rx="4" fill="#141828"/>
+        <rect x="73" y="197" width="14" height="6" rx="3" fill="rgba(94,255,160,0.5)"/>
+      </svg>
+    </div>
+
+    <div class="about-content">
+      <p class="section-eyebrow">About Me</p>
+      <h2 class="section-title">The Story<br/>Behind the Brand</h2>
+      <p class="about-text">I'm Aditya Bharti — a passionate digital marketer with a love for crafting campaigns that don't just look good, but actually move the needle. I blend creative storytelling with sharp data analysis to build brands that people connect with.</p>
+      <p class="about-text">From SEO strategy and paid advertising to content creation and social media growth, I bring a full-funnel perspective to every project.</p>
+      <div class="about-tags">
+        <span class="tag">SEO Strategy</span>
+        <span class="tag">Paid Ads (Meta/Google)</span>
+        <span class="tag">Content Marketing</span>
+        <span class="tag">Brand Identity</span>
+        <span class="tag">Social Media Growth</span>
+        <span class="tag">Email Marketing</span>
+      </div>
+      <div class="about-stats">
+        <div class="stat-item">
+          <div class="stat-num">50+</div>
+          <div class="stat-label">Projects Delivered</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3x</div>
+          <div class="stat-label">Avg. ROAS</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">98%</div>
+          <div class="stat-label">Client Satisfaction</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-inner">
+    <div class="section-header">
+      <p class="section-eyebrow">What I Do</p>
+      <h2 class="section-title">Services</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">🎯</div>
+        <div class="service-name">Paid Advertising</div>
+        <p class="service-desc">Performance-driven Meta & Google ad campaigns built to maximize ROAS and scale your business profitably.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📈</div>
+        <div class="service-name">SEO & Content</div>
+        <p class="service-desc">Data-backed SEO strategies paired with compelling content that ranks, converts, and builds authority.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📱</div>
+        <div class="service-name">Social Media</div>
+        <p class="service-desc">Grow your audience and engagement with strategic content calendars, creative posts and community management.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">✉️</div>
+        <div class="service-name">Email Marketing</div>
+        <p class="service-desc">High-converting email sequences and newsletters that nurture leads and drive repeat purchases.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🧠</div>
+        <div class="service-name">Brand Strategy</div>
+        <p class="service-desc">Define your brand voice, positioning and visual identity to stand out in a crowded market.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📊</div>
+        <div class="service-name">Analytics & Reporting</div>
+        <p class="service-desc">Clear, actionable reports that translate complex data into decisions that accelerate growth.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-inner">
+    <div class="footer-name">Aditya Bharti</div>
+    <div class="footer-tagline">Digital Marketer · Brand Strategist · Growth Hacker</div>
+    <div class="social-links">
+      <a class="social-btn insta" href="https://instagram.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Instagram
+      </a>
+      <a class="social-btn whatsapp" href="https://wa.me/911234567890" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+        WhatsApp
+      </a>
+      <a class="social-btn linkedin" href="https://linkedin.com" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+          <rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
+        </svg>
+        LinkedIn
+      </a>
+    </div>
+    <div class="footer-copy">© 2025 Aditya Bharti. Crafted with ☕ & strategy.</div>
+  </div>
+</footer>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ── CURSOR ── */
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  let rx = mx, ry = my;
+
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function animCursor(){
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  })();
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px'; cursor.style.height = '20px';
+      ring.style.width = '52px'; ring.style.height = '52px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px'; cursor.style.height = '12px';
+      ring.style.width = '36px'; ring.style.height = '36px';
+    });
+  });
+
+  /* ── HERO CURSOR TRACKING ── */
+  const charSvg = document.getElementById('character-svg');
+  const pupilL = document.getElementById('pupil-l');
+  const pupilR = document.getElementById('pupil-r');
+  const hlL = document.getElementById('highlight-l');
+  const hlR = document.getElementById('highlight-r');
+
+  document.addEventListener('mousemove', e => {
+    const rect = charSvg.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height * 0.3;
+    const dx = (e.clientX - cx) / window.innerWidth;
+    const dy = (e.clientY - cy) / window.innerHeight;
+
+    // Body lean
+    const leanX = dx * 6;
+    const leanY = dy * 3;
+    gsap.to(charSvg, { rotateY: leanX, rotateX: -leanY, duration: 0.4, ease: 'power2.out' });
+
+    // Pupil tracking (SVG coordinate space: eye centers at 87,83 and 113,83)
+    const px = dx * 2.5, py = dy * 2;
+    gsap.to(pupilL, { attr: { cx: 87 + px, cy: 84 + py }, duration: 0.25 });
+    gsap.to(pupilR, { attr: { cx: 113 + px, cy: 84 + py }, duration: 0.25 });
+    gsap.to(hlL, { attr: { cx: 89 + px, cy: 82 + py }, duration: 0.25 });
+    gsap.to(hlR, { attr: { cx: 115 + px, cy: 82 + py }, duration: 0.25 });
+
+    // Head follows slightly
+    const headEl = charSvg.querySelectorAll('ellipse')[2];
+  });
+
+  /* ── FLOATING BADGE ANIMATION ── */
+  gsap.to('#float1', { y: -8, duration: 2.2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+  gsap.to('#float2', { y: -6, duration: 1.9, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 0.4 });
+  gsap.to('#float3', { y: -10, duration: 2.6, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 0.8 });
+
+  /* Cursor blink */
+  gsap.to('#cursor-blink', { opacity: 0, duration: 0.5, repeat: -1, yoyo: true, ease: 'steps(1)' });
+
+  /* ── ENTRY ANIMATIONS ── */
+  const tl = gsap.timeline({ delay: 0.2 });
+  tl.to('.hero-left', { opacity: 1, x: 0, duration: 0.9, ease: 'power3.out' })
+    .to('.hero-right', { opacity: 1, x: 0, duration: 0.9, ease: 'power3.out' }, '-=0.6')
+    .to('.scroll-hint', { opacity: 1, duration: 0.6 }, '-=0.2');
+
+  /* ── ABOUT: WALK-IN ANIMATION ── */
+  const aboutTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '#about',
+      start: 'top 75%',
+      once: true
+    }
+  });
+  // Character walks in from right
+  gsap.set('.about-char-wrap', { x: 120 });
+  aboutTl
+    .to('.about-char-wrap', {
+      opacity: 1, x: 0, duration: 1.1, ease: 'power3.out',
+      onUpdate: function() {
+        // Wiggle legs for walking effect
+      }
+    })
+    .to('.about-content', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.5');
+
+  // Walk leg animation
+  gsap.to('#leg-l', { attr: { d: 'M58 195 L55 255 L69 255 L72 215' }, duration: 0.45, repeat: -1, yoyo: true, ease: 'power1.inOut' });
+  gsap.to('#leg-r', { attr: { d: 'M82 195 L86 252 L100 252 L96 215' }, duration: 0.45, repeat: -1, yoyo: true, ease: 'power1.inOut', delay: 0.225 });
+  gsap.to('#walk-arm-l', { rotate: 10, transformOrigin: '30px 125px', duration: 0.45, repeat: -1, yoyo: true, ease: 'power1.inOut' });
+  gsap.to('#walk-arm-r', { rotate: -10, transformOrigin: '130px 125px', duration: 0.45, repeat: -1, yoyo: true, ease: 'power1.inOut', delay: 0.225 });
+
+  // Pause walk when in view
+  ScrollTrigger.create({
+    trigger: '#about',
+    start: 'top 40%',
+    onEnter: () => {
+      gsap.to(['#leg-l','#leg-r','#walk-arm-l','#walk-arm-r'], {
+        clearProps: 'all', duration: 0.4
+      });
+    }
+  });
+
+  /* ── SERVICE CARDS ── */
+  gsap.utils.toArray('.service-card').forEach((card, i) => {
+    gsap.to(card, {
+      opacity: 1, y: 0, duration: 0.6,
+      delay: (i % 3) * 0.1,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: card, start: 'top 88%', once: true }
+    });
+  });
+
+  /* ── SMOOTH SCROLL FOR ANCHORS ── */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+
+  /* ── MOBILE: disable cursor ── */
+  if (window.matchMedia('(hover: none)').matches) {
+    document.body.style.cursor = 'auto';
+    cursor.style.display = 'none';
+    ring.style.display = 'none';
+  }
+</script>
+</body>
+</html>
